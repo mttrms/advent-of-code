@@ -1,80 +1,53 @@
 const fs = require('fs');
 const input = fs.readFileSync('input.txt', 'utf8').split("\n");
+
 const firstWirePath = input[0].split(',');
 const secondWirePath = input[1].split(',');
 
-let firstWirePos = [0, 0];
-let secondWirePos = [0, 0];
+const getCoords = (wire) => {
+	let currentPos = [0, 0];
+	let count = 0;
+	let positions = {};
 
-let firstWirePositions = {};
-let crossedWirePositions = {};
+	wire.forEach((dir) => {
+		const direction = dir.slice(0, 1);
+		const length = dir.slice(1);
 
-const getFirstWirePositions = (currentPos, pathDirection) => {
-  const direction = pathDirection.slice(0, 1);
-  const length = parseInt(pathDirection.slice(1));
-  const positions = [];
+		for (let i = 0; i < length; i++) {
+			count += 1;
 
-  for (let i = 0; i < length; i++) {
-    if (direction === "L") {
-      firstWirePos = [firstWirePos[0], firstWirePos[1] - 1];
-    } else if (direction === "U") {
-      firstWirePos = [firstWirePos[0] - 1, firstWirePos[1]];
-    } else if (direction === "R") {
-      firstWirePos = [firstWirePos[0], firstWirePos[1] + 1];
-    } else if (direction === "D") {
-      firstWirePos = [firstWirePos[0] + 1, firstWirePos[1]];
-    }
-    positions.push(firstWirePos)
-  }
+			if (direction === "L") {
+				currentPos = [currentPos[0], currentPos[1] - 1];
+			} else if (direction === "U") {
+				currentPos = [currentPos[0] - 1, currentPos[1]];
+			} else if (direction === "R") {
+				currentPos = [currentPos[0], currentPos[1] + 1];
+			} else if (direction === "D") {
+				currentPos = [currentPos[0] + 1, currentPos[1]];
+			}
 
-  return positions;
+			let stringPos = `${currentPos[0]},${currentPos[1]}` 
+			positions[stringPos] = positions[stringPos] || count;
+		}
+	})
+
+	return positions;
 }
 
-const getSecondWirePositions = (currentPos, pathDirection) => {
-  const direction = pathDirection.slice(0, 1);
-  const length = parseInt(pathDirection.slice(1));
+const getIntersections = (pos1, pos2) => {
+	let intersections = {};
+	let allPoints = Object.keys(pos1).concat(Object.keys(pos2));
 
-  for (let i = 0; i < length; i++) {
-    if (direction === "L") {
-      secondWirePos = [secondWirePos[0], secondWirePos[1] - 1];
-    } else if (direction === "U") {
-      secondWirePos = [secondWirePos[0] - 1, secondWirePos[1]];
-    } else if (direction === "R") {
-      secondWirePos = [secondWirePos[0], secondWirePos[1] + 1];
-    } else if (direction === "D") {
-      secondWirePos = [secondWirePos[0] + 1, secondWirePos[1]];
-    }
+	allPoints.forEach((pos) => {
+		if (pos1[pos] && pos2[pos]) {
+			intersections[pos] = pos1[pos] + pos2[pos];
+		}
+	})
 
-    let pos = [JSON.stringify(secondWirePos)];
-    if (firstWirePositions[pos] === true) {
-      crossedWirePositions[pos] = true;
-    }
-  }
+	return Object.values(intersections);
 }
 
-const findClosestCross = (crossedPositions) => {
-  for (let pos in crossedPositions) {
-    const actualPos = JSON.parse(pos);
-    const y = actualPos[0];
-    const x = actualPos[1];
+const wireOnePositions = getCoords(firstWirePath);
+const wireTwoPositions = getCoords(secondWirePath);
 
-    const mValue = (Math.abs(y) + Math.abs(x))
-
-
-    crossedPositions[pos] = mValue
-    // console.log(JSON.parse(pos));
-  }
-}
-
-firstWirePath.forEach(function(dir) {
-  getFirstWirePositions(firstWirePos, dir).forEach((pos) => {
-    firstWirePositions[JSON.stringify(pos)] = true;
-  })
-})
-
-secondWirePath.forEach(function(dir) {
-  getSecondWirePositions(secondWirePos, dir);
-})
-
-findClosestCross(crossedWirePositions);
-console.log(crossedWirePositions);
+console.log(getIntersections(wireOnePositions, wireTwoPositions));
