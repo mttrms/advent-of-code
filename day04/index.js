@@ -4,12 +4,13 @@ let validNumCount = 0;
 
 for (let i = inputOne; i <= inputTwo; i++) {
   const digits = Array.from(String(i), Number);
-  let hasAdjacent = false;
   let isIncreasing = true;
+  let adjacentDigits = {};
 
   for (let d = 0; d < digits.length - 1; d++) {
+    let digit = digits[d];
     if (digits[d] === digits[d+1]) {
-      hasAdjacent = true;
+      adjacentDigits[digit] = adjacentDigits[digit] + 1 || 1;
     }
 
     if (digits[d] > digits[d + 1]) {
@@ -17,7 +18,9 @@ for (let i = inputOne; i <= inputTwo; i++) {
     }
   }
 
-  if (hasAdjacent && isIncreasing) {
+  if (isIncreasing && Object.values(adjacentDigits).some((count) => {
+    return count === 1;
+  })) {
     validNumCount += 1;
   }
 }
