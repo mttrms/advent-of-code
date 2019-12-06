@@ -31,4 +31,20 @@ const buildPlanets = (input) => {
   return planets;
 }
 
+const countOrbits = (planets) => {
+  let orbitCount = 0;
+
+  Object.values(planets).forEach((planet) => {
+    let parentPlanet = planet.parent;
+
+    while (parentPlanet !== null) {
+      orbitCount += 1;
+      parentPlanet = parentPlanet.parent;
+    }
+  })
+
+  return orbitCount;
+}
+
 let planets = buildPlanets(input);
+console.log(countOrbits(planets));
