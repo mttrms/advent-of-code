@@ -1,7 +1,7 @@
 const fs = require('fs');
 const instructions = fs.readFileSync('input.txt', 'utf8')
                    .split(',').map(val => parseInt(val));
-let input = 1;
+let input = 5;
 let output; 
 
 const processOpCode = (opCode) => {
@@ -20,21 +20,17 @@ for (let i = 0; i < instructions.length; i++) {
 
   const paramOne = instruction[2];
   const paramTwo = instruction[1];
-  const paramThree = instruction[0];
+
+  valueOne = paramOne == true ? instructions[i + 1] : instructions[(instructions[i + 1])];
+  valueTwo = paramTwo == true ? instructions[i + 2] : instructions[(instructions[i + 2])];
 
   switch (opCode) {
     case '01':
-      valueOne = paramOne == true ? instructions[i + 1] : instructions[(instructions[i + 1])];
-      valueTwo = paramTwo == true ? instructions[i + 2] : instructions[(instructions[i + 2])];
-
       instructions[instructions[i + 3]] = valueOne + valueTwo;
 
       i += 3;
       break;
     case '02':
-      valueOne = paramOne == true ? instructions[i + 1] : instructions[(instructions[i + 1])];
-      valueTwo = paramTwo == true ? instructions[i + 2] : instructions[(instructions[i + 2])];
-
       instructions[instructions[i + 3]] = valueOne * valueTwo;
 
       i += 3;
@@ -54,6 +50,40 @@ for (let i = 0; i < instructions.length; i++) {
       }
 
       i += 1;
+      break;
+    case '05':
+      if (valueOne !== 0) {
+        i = Number(valueTwo) - 1;
+      } else {
+        i += 2;
+      }
+
+      break;
+    case '06':
+      if (valueOne === 0) {
+        i = Number(valueTwo) - 1;
+      } else {
+        i += 2;
+      }
+
+      break;
+    case '07':
+      if (Number(valueOne) < Number(valueTwo)) {
+        instructions[instructions[i + 3]] = 1;
+      } else {
+        instructions[instructions[i + 3]] = 0;
+      }
+
+      i += 3;
+      break;
+    case '08':
+      if (Number(valueOne) === Number(valueTwo)) {
+        instructions[instructions[i + 3]] = 1;
+      } else {
+        instructions[instructions[i + 3]] = 0;
+      }
+
+      i += 3;
       break;
     case '99':
       console.log(output);
