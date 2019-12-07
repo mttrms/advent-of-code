@@ -46,5 +46,40 @@ const countOrbits = (planets) => {
   return orbitCount;
 }
 
+const calculateTransfers = (planets, origin, destination) => {
+  const originPlanet = planets[origin];
+  const destinationPlanet = planets[destination];
+
+  const originOrbits = buildOrbits(originPlanet);
+  const destinationOrbits = buildOrbits(destinationPlanet);
+
+  let requiredHops = 0;
+
+  for (let i = 0; i < destinationOrbits.length; i++) {
+    if (originOrbits.find((planet, idx) => {
+      requiredHops = idx;
+      return destinationOrbits[i].name === planet.name;
+    })) {
+      return requiredHops + i;
+    }
+  }
+}
+
+const buildOrbits = (planet) => {
+  const orbits = [];
+  let parentPlanet = planet.parent;
+
+  while (parentPlanet !== null) {
+    orbits.push(parentPlanet);
+    parentPlanet = parentPlanet.parent;
+  }
+
+  return orbits;
+}
+
 let planets = buildPlanets(input);
+let orig = 'YOU';
+let dest = 'SAN';
+
 console.log(countOrbits(planets));
+console.log(calculateTransfers(planets, orig, dest));
