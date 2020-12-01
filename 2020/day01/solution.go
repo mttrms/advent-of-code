@@ -29,10 +29,14 @@ func main() {
 		nums[i] = Empty
 
 		if checkSolution(nums, i) {
+      fmt.Println("Part 1 solution:")
 			fmt.Println(i * (solution - i))
-			return
 		}
 	}
+  partTwoSolution := getPartTwo(nums)
+
+  fmt.Println("Part 2 solution:")
+  fmt.Println(partTwoSolution)
 }
 
 func checkSolution(numMap map[int]struct{}, currentNum int) bool {
@@ -43,4 +47,23 @@ func checkSolution(numMap map[int]struct{}, currentNum int) bool {
 	} else {
 		return false
 	}
+}
+
+func getPartTwo(numMap map[int]struct{}) int {
+  fmt.Println("Map now")
+  for i, _ := range numMap {
+    for j, _ := range numMap {
+      if i == j {
+        continue
+      }
+
+      desiredValue := solution - i - j
+      _, ok := numMap[desiredValue]
+      if ok {
+        return i * j * desiredValue
+      }
+    }
+  }
+
+  return -1
 }
