@@ -28,7 +28,11 @@ func main() {
   invalidPasswords := countInvalidPasswords(formattedPasswords)
   validPasswords := len(formattedPasswords) - invalidPasswords
 
-  fmt.Printf("There are %v valid passwords\n", validPasswords)
+  newInvalidPasswords := countNewInvalidPasswords(formattedPasswords)
+  newValidPasswords := len(formattedPasswords) - newInvalidPasswords
+
+  fmt.Printf("Part 1 - There are %v valid passwords\n", validPasswords)
+  fmt.Printf("Part 2 - There are %v valid passwords\n", newValidPasswords)
 }
 
 func formatPasswords(file *os.File) []Password {
@@ -63,6 +67,22 @@ func isPasswordInvalid(password Password) bool {
   return charUsage < password.minimum || charUsage > password.maximum
 }
 
+func isNewPasswordInvalid(p Password) bool {
+  validCount := 0
+  i := p.minimum - 1
+  j := p.maximum - 1
+
+  if string(p.password[i]) == p.character {
+    validCount++
+  }
+
+  if string(p.password[j]) == p.character {
+    validCount++
+  }
+
+  return validCount != 1
+}
+
 func countInvalidPasswords(passwords []Password) int {
   i := 0
   for _, pw := range passwords {
@@ -72,4 +92,15 @@ func countInvalidPasswords(passwords []Password) int {
   }
 
     return i
+}
+
+func countNewInvalidPasswords(passwords []Password) int {
+  i := 0
+  for _, pw := range passwords {
+    if (isNewPasswordInvalid(pw)) {
+      i++
+    }
+  }
+
+  return i
 }
